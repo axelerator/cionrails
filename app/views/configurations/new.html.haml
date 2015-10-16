@@ -1,0 +1,14 @@
+%h1 New configuration
+
+- unless @access_token
+  = form_tag new_configuration_path, method: :get do
+    = text_field_tag :access_token
+    %button List repos
+- else
+  %h4 #{@repos.count} Repos found
+  %ul
+    - @repos.each do |repo|
+      %li
+        = link_to repo, configuration_path(admin_uid: @admin_uid, repo_url: repo), method: :post
+
+= link_to 'Back', configuration_path

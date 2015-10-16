@@ -1,0 +1,11 @@
+%p#notice= notice
+
+%p
+  %b Repo url:
+  = @configuration.repo_url
+  %b Admin id:
+  = @configuration.admin_uid
+  %b Deploy Key
+  %pre= File.read(Rails.root.join('config', 'deploy_key', 'deploy_key.pub'))
+
+
