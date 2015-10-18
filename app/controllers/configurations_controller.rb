@@ -1,3 +1,4 @@
+require 'fileutils'
 class ConfigurationsController < ApplicationController
   before_action :set_configuration, only: [:show, :edit, :update, :destroy]
 
@@ -5,15 +6,18 @@ class ConfigurationsController < ApplicationController
   # GET /configurations/1.json
   def show
     redirect_to action: :new unless @configuration
-    public_key = Rails.root.join('config', 'deploy_key', 'deploy_key.pub').to_s
-    private_key = Rails.root.join('config', 'deploy_key', 'deploy_key').to_s
-
-    creds = Rugged::Credentials::SshKey.new(username: 'ci', publickey: public_key, privatekey: private_key)
-    Rugged::Repository.clone_at "git://github.com/#{@configuration.repo_url}.git", Rails.root.join('workspaces', 'build').to_s, credentials: creds
 
   end
 
   def new
+    ssh_key_dir = Rails.root.join('config', 'deploy_key')
+    path = ssh_key_dir.join('deploy_key')
+
+    unless File.exists?(path)
+      system "ssh-keygen -t rsa -b 4096 -q -N '' -f '#{path}'"
+    end
+    @public_key = File.read(ssh_key_dir.join('deploy_key.pub'))
+
     @access_token = params[:access_token]
     if @access_token.present?
       Octokit.auto_paginate = true
@@ -42,6 +46,12 @@ class ConfigurationsController < ApplicationController
     else
        render :new
     end
+  end
+
+  def reset
+    @config = ::Configuration.first
+    @config.reset! if @config
+    redirect_to action: :new
   end
 
   private

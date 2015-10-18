@@ -1,0 +1,9 @@
+= simple_form_for @build do |f|
+  = f.input :branch, as: :select, collection: @configuration.branches
+  = f.submit
+%ul
+  - @builds.each do |build|
+    %li
+      (#{build.id}) #{build.branch} [#{build.state}] (ruby: #{build.ruby_version})
+      %pre=build.output
+

@@ -7,8 +7,7 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'jquery-rails'
 gem 'jbuilder', '~> 2.0'
 gem 'octokit'
-gem 'rugged'
-gem 'sshkey'
+gem 'open4'
 
 group :development, :test do
   gem 'byebug'
