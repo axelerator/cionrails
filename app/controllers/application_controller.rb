@@ -8,7 +8,13 @@ class ApplicationController < ActionController::Base
   helper_method :correct_user?
   helper_method :current_config
 
+  before_action :assert_current_user
+
   private
+    def assert_current_user
+      redirect_to root_path unless current_user
+    end
+
     def current_config
       @config ||= ::Configuration::first
     end

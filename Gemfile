@@ -9,6 +9,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'octokit'
 gem 'open4'
 gem 'delayed_job_active_record'
+gem "font-awesome-rails"
 
 group :development, :test do
   gem 'byebug'

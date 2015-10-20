@@ -10,6 +10,30 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require font-awesome
  *= require_tree .
  *= require_self
  */
+
+@import 'foundation/components/grid'
+.branches
+  margin: 0
+  padding: 0
+  list-style-type: none
+  @include grid-row
+  > li
+    @include grid-column(6)
+    .builds
+      padding: 0
+      margin: 0
+      list-style-type: none
+      li
+        pre
+          background-color: black
+          color: #DDD
+          max-height: 800px
+          overflow: scroll
+        &.collapsed
+          pre
+            display: none
+

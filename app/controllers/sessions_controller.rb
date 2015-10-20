@@ -1,5 +1,7 @@
 class SessionsController < ApplicationController
 
+  skip_before_action :assert_current_user, only: [:new, :create]
+
   def new
     redirect_to '/auth/github'
   end
@@ -10,7 +12,7 @@ class SessionsController < ApplicationController
                       :uid => auth['uid'].to_s).first || User.create_with_omniauth(auth)
     reset_session
     session[:user_id] = user.id
-    redirect_to root_url, :notice => 'Signed in!'
+    redirect_to builds_path, :notice => 'Signed in!'
   end
 
   def destroy

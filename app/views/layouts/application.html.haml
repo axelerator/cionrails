@@ -10,8 +10,9 @@
     = javascript_include_tag 'application'
     = csrf_meta_tags
   %body
-    %header
-      = render 'layouts/navigation'
+    - unless controller.is_a? VisitorsController
+      %header
+        = render 'layouts/navigation'
     %main{:role => "main"}
       = render 'layouts/messages'
       = yield
