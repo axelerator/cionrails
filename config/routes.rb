@@ -3,6 +3,11 @@ Rails.application.routes.draw do
     post :reset, as: :reset
   end
   resources :builds
+  resources :branches do
+    member do
+      post :build_now
+    end
+  end
   root to: 'visitors#index'
   post 'github', to: 'configurations#webhook'
   get '/auth/:provider/callback' => 'sessions#create'

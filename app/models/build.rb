@@ -3,15 +3,11 @@ require 'open3'
 require 'open4'
 class Build < ActiveRecord::Base
   enum state: [:created, :checkout, :waiting_for_build, :building, :succeeded, :aborted, :failed]
+  belongs_to :branch, inverse_of: :builds
 
   validates :branch, presence: true
 
-  def working_dir
-    raise "No work for unpersisted builds!!" unless id.present?
-    @working_dir = config.workspace.join('builds', id.to_s)
-    FileUtils.mkdir_p(@working_dir)
-    @working_dir
-  end
+  before_destroy :clear_working_dir
 
   def checkout
     raise "expected to be in state created" unless created?
@@ -21,6 +17,26 @@ class Build < ActiveRecord::Base
     system "rsync -qav --exclude=\".*\" #{config.repo_dir.join('*')} #{working_dir}"
     update_attribute(:ruby_version, ruby_version_from_gemfile)
     self.waiting_for_build!
+    ExecBuildJob.perform_later(self.id)
+  end
+
+  def build
+    raise "exepcted to be in state waiting_for_build" unless waiting_for_build?
+    self.building!
+    execute_in_rbenv "bundle"
+    execute_in_rbenv "bundle exec rake test"
+    self.succeeded!
+  end
+
+  def clear_working_dir
+    FileUtils.rm_rf(working_dir)
+  end
+
+  def working_dir
+    raise "No work for unpersisted builds!!" unless id.present?
+    @working_dir = config.workspace.join('builds', id.to_s)
+    FileUtils.mkdir_p(@working_dir)
+    @working_dir
   end
 
   def ruby_version_from_gemfile
@@ -77,11 +93,6 @@ class Build < ActiveRecord::Base
       retry
     rescue EOFError
     end
-  end
-
-  def build
-    execute_in_rbenv "bundle"
-    execute_in_rbenv "bundle exec rake test"
   end
 
   private

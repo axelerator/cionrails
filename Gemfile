@@ -8,6 +8,7 @@ gem 'jquery-rails'
 gem 'jbuilder', '~> 2.0'
 gem 'octokit'
 gem 'open4'
+gem 'delayed_job_active_record'
 
 group :development, :test do
   gem 'byebug'

@@ -1,9 +1,13 @@
-= simple_form_for @build do |f|
-  = f.input :branch, as: :select, collection: @configuration.branches
+= simple_form_for @branch, url: builds_path, method: :post do |f|
+  = f.input :name, as: :select, collection: @configuration.branches
   = f.submit
 %ul
-  - @builds.each do |build|
+  - @branches.each do |branch|
     %li
-      (#{build.id}) #{build.branch} [#{build.state}] (ruby: #{build.ruby_version})
-      %pre=build.output
-
+      %h3= branch.simple_name
+      = link_to 'build now', build_now_branch_path(branch), method: :post
+      %ul
+        - branch.builds.order(created_at: :desc).take(5).each do |build|
+          %li
+            (#{build.id}) #{build.branch.simple_name} [#{build.state}] (ruby: #{build.ruby_version})
+            %pre(style="display: none")=build.output

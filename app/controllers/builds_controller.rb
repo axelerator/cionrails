@@ -2,8 +2,8 @@ class BuildsController < ApplicationController
   before_action :load_config
 
   def index
-    @builds = Build.all
     @branch = Branch.new
+    @branches = Branch.all
   end
 
   def create

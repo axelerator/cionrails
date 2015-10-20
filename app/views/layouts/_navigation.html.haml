@@ -1,12 +1,30 @@
 -# navigation styled for Zurb Foundation 5
 -# the syntax for data-topbar may need to change for Zurb Foundation 5
-%nav.top-bar{"data-topbar" => true}
+-#%nav.top-bar{"data-topbar" => true}
   %ul.title-area
     %li.name
       = link_to 'Home', root_path
     %li.toggle-topbar.menu-icon
       %a{:href => "#"}
         Menu
+  .title-area
+    title
   .top-bar-section
     %ul
+      = render 'layouts/navigation_links'
+%nav.top-bar.hide-for-small
+  %ul.title-area
+    / Title Area
+    %li.name
+      %h1
+        - title = current_config ? current_config.name : 'not yet configured'
+        = link_to title, root_path
+
+        %a{:href => "http://www.zurb.com/expo"}
+          Expo
+    %li.toggle-topbar
+      %a{:href => "#"}
+  .top-bar-section
+    / Right Nav Section
+    %ul.right
       = render 'layouts/navigation_links'

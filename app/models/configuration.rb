@@ -3,6 +3,10 @@ require 'open3'
 class Configuration < ActiveRecord::Base
   validates :admin_uid, :repo_url, presence: :true
 
+  def name
+    self.repo_url
+  end
+
   def reset!
     FileUtils.rm([public_key, private_key])
     FileUtils.rm_rf(workspace)
