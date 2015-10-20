@@ -3,12 +3,12 @@ class BuildsController < ApplicationController
 
   def index
     @builds = Build.all
-    @build = Build.new
+    @branch = Branch.new
   end
 
   def create
-    @build = Build.new(branch: params[:build][:branch])
-    if @build.save
+    @branch = Branch.new(name: params[:branch][:name])
+    if @branch.save
       redirect_to action: :index
     else
       render :index

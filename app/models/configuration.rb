@@ -2,7 +2,6 @@ require 'fileutils'
 require 'open3'
 class Configuration < ActiveRecord::Base
   validates :admin_uid, :repo_url, presence: :true
-  before_save :clone_repo, unless: :persisted?
 
   def reset!
     FileUtils.rm([public_key, private_key])
@@ -41,6 +40,15 @@ class Configuration < ActiveRecord::Base
   def exec_git(cmd)
     cmd = "GIT_SSH_COMMAND='ssh -i #{private_key}' cd #{repo_dir} && git #{cmd}"
     `#{cmd}`
+  end
+
+  def github_client
+    @client ||= Octokit::Client.new(access_token: access_token)
+  end
+
+  def add_deploy_key_to_github
+    delploy_key_content = File.read(public_key)
+    github_client.post("repos/#{repo_url}/keys", title: 'ci_onrails', key: delploy_key_content, read_only: true)
   end
 
   def clone_repo

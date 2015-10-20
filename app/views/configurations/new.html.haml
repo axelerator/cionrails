@@ -9,7 +9,6 @@
   %h4 #{@repos.count} Repos found
   %ul
     - @repos.each do |repo|
-      %li
-        = link_to repo, configuration_path(admin_uid: @admin_uid, repo_url: repo), method: :post
+      %li= link_to repo, configuration_path(admin_uid: @admin_uid, repo_url: repo, access_token: @access_token), method: :post
 
 = link_to 'Back', configuration_path

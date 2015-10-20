@@ -11,25 +11,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151018151048) do
+ActiveRecord::Schema.define(version: 20151018191649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "branches", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "builds", force: :cascade do |t|
-    t.integer  "state",        default: 0, null: false
-    t.text     "branch",                   null: false
-    t.text     "output"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
+    t.integer  "state",        default: 0,  null: false
+    t.text     "branch",                    null: false
+    t.text     "output",       default: "", null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
     t.string   "ruby_version"
   end
 
   create_table "configurations", force: :cascade do |t|
-    t.string   "repo_url",   null: false
-    t.string   "admin_uid",  null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "repo_url",     null: false
+    t.string   "access_token", null: false
+    t.string   "admin_uid",    null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "users", force: :cascade do |t|

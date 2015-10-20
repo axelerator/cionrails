@@ -1,12 +1,17 @@
 require 'fileutils'
 class ConfigurationsController < ApplicationController
   before_action :set_configuration, only: [:show, :edit, :update, :destroy]
-
+  skip_before_action :verify_authenticity_token, only: :webhook
   # GET /configurations/1
   # GET /configurations/1.json
   def show
     redirect_to action: :new unless @configuration
 
+  end
+
+  def webhook
+     puts "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" + request.params.to_yaml
+     render text: ''
   end
 
   def new
@@ -40,7 +45,7 @@ class ConfigurationsController < ApplicationController
   # POST /configurations.json
   def create
     raise "Already configured" if ::Configuration.count != 0
-    @configuration = ::Configuration.new(admin_uid: params[:admin_uid], repo_url: params[:repo_url])
+    @configuration = ::Configuration.new(admin_uid: params[:admin_uid], repo_url: params[:repo_url], access_token: params[:access_token])
     if @configuration.save
        redirect_to action: :show, notice: 'Configuration was successfully created.'
     else
