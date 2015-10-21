@@ -1,13 +1,22 @@
 -#= simple_form_for @branch, url: builds_path, method: :post do |f|
   = f.input :name, as: :select, collection: @configuration.branches
   = f.submit
+
+= simple_form_for :pull_request, url: pull_requests_path, method: :post do |f|
+  = f.input :id, as: :select, collection: @configuration.api_pull_requests.map{|pr| [pr.title, pr.id]}
+  = f.submit
 %ul.branches
   - @branches.each do |branch|
     %li
-      %h3= branch.simple_name
-      = link_to 'build now', build_now_branch_path(branch), method: :post
+      %h3
+        = branch.simple_name
+        = link_to  build_now_branch_path(branch), method: :post, class: 'build-btn' do
+          = fa_icon 'play-circle'
       %ul.builds
         - branch.builds.order(created_at: :desc).take(5).each do |build|
-          %li.collapsed(onclick="$(this).toggleClass('collapsed')")
-            #{state_icon(build)} #{build.branch.simple_name} [#{build.state}] (ruby: #{build.ruby_version})
-            %pre=build.output
+          %li.collapsed(class="#{build.state}" onclick="$(this).toggleClass('collapsed')")
+            .summary #{state_icon(build)} #{build.title}
+            .details
+              %span.label.round ruby: #{build.ruby_version}
+            %pre
+              = build.output

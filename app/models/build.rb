@@ -13,9 +13,12 @@ class Build < ActiveRecord::Base
     raise "expected to be in state created" unless created?
     self.checkout!
     config.exec_git('fetch')
-    config.exec_git("checkout #{branch}")
+    config.exec_git("checkout #{branch.name}")
+    sha, *msg = config.exec_git('log --oneline -1').split(/\s+/)
+
     system "rsync -qav --exclude=\".*\" #{config.repo_dir.join('*')} #{working_dir}"
     update_attribute(:ruby_version, ruby_version_from_gemfile)
+    self.update_attributes(sha: sha, title: msg.join(' '))
     self.waiting_for_build!
     ExecBuildJob.perform_later(self.id)
   end
@@ -24,8 +27,14 @@ class Build < ActiveRecord::Base
     raise "exepcted to be in state waiting_for_build" unless waiting_for_build?
     self.building!
     execute_in_rbenv "bundle"
-    execute_in_rbenv "bundle exec rake test"
-    self.succeeded!
+    status = execute_in_rbenv "bundle exec rake test"
+    if status == 0
+      self.succeeded!
+      branch.set_github_state('success') if branch.is_a? Branch::PullRequest
+    else
+      self.failed!
+      branch.set_github_state('failure') if branch.is_a? Branch::PullRequest
+    end
   end
 
   def clear_working_dir
@@ -74,12 +83,15 @@ class Build < ActiveRecord::Base
   end
 
   def execute_in_rbenv(cmd)
+    status = nil
     Bundler.with_clean_env do
       wrapped = "cd #{working_dir} && BUNDLE_GEMFILE=#{working_dir}/Gemfile RBENV_VERSION=#{ruby_version} rbenv exec #{cmd}"
-      pid, stdin, stdout, stderr = Open4::popen4 wrapped
-      stdout.fcntl(Fcntl::F_SETFL, Fcntl::O_NONBLOCK)
-      streamer(self, stdout)
+      status = Open4::popen4 wrapped do |pid, stdin, stdout, stderr|
+        stdout.fcntl(Fcntl::F_SETFL, Fcntl::O_NONBLOCK)
+        streamer(self, stdout)
+      end
     end
+    status
   end
 
   def streamer(build, stdout)

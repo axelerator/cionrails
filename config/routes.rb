@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     post :reset, as: :reset
   end
   resources :builds
+  resources :pull_requests
   resources :branches do
     member do
       post :build_now

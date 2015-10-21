@@ -16,6 +16,7 @@
  */
 
 @import 'foundation/components/grid'
+@import 'foundation/components/buttons'
 .branches
   margin: 0
   padding: 0
@@ -23,6 +24,9 @@
   @include grid-row
   > li
     @include grid-column(6)
+    .build-btn
+      +button($button-tny)
+      float: right
     .builds
       padding: 0
       margin: 0
@@ -34,6 +38,13 @@
           max-height: 800px
           overflow: scroll
         &.collapsed
-          pre
+          >:not(.summary)
             display: none
+        &.success
+          i.fa
+            color: #499
+        &.failed
+          i.fa
+            color: #944
+
 

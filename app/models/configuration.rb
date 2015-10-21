@@ -46,8 +46,16 @@ class Configuration < ActiveRecord::Base
     `#{cmd}`
   end
 
+  def self.current
+    ::Configuration.first
+  end
+
   def github_client
     @client ||= Octokit::Client.new(access_token: access_token)
+  end
+
+  def api_pull_requests
+    github_client.get('repos/fortytools/pdf-rechnungen/pulls')
   end
 
   def add_deploy_key_to_github

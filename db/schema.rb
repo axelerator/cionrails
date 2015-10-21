@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151020212309) do
+ActiveRecord::Schema.define(version: 20151021213935) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 20151020212309) do
     t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "pr_id"
+    t.string   "type"
   end
 
   create_table "builds", force: :cascade do |t|
@@ -29,6 +31,8 @@ ActiveRecord::Schema.define(version: 20151020212309) do
     t.datetime "updated_at",                null: false
     t.string   "ruby_version"
     t.integer  "branch_id",                 null: false
+    t.string   "sha"
+    t.string   "title"
   end
 
   add_index "builds", ["branch_id"], name: "index_builds_on_branch_id", using: :btree

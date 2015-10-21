@@ -5,7 +5,7 @@ module ApplicationHelper
       "created" => fa_icon('question-circle'),
       "checkout" => fa_icon('cloud-download'),
       "waiting_for_build" => fa_icon('clock-o'),
-      "building" => fa_icon('gears'),
+      "building" => fa_icon('circle-o-notch spin'),
       "failed" => fa_icon('thumbs-down'),
       "aborted" => fa_icon('exclamation-circle'),
       "succeeded" => fa_icon('thumbs-up')
@@ -13,4 +13,5 @@ module ApplicationHelper
 
     state_icons[build.state] || fa_icon('question-circle')
   end
+
 end
