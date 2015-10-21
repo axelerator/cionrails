@@ -2,7 +2,7 @@
   = f.input :name, as: :select, collection: @configuration.branches
   = f.submit
 
-= simple_form_for :pull_request, url: pull_requests_path, method: :post do |f|
+-#= simple_form_for :pull_request, url: pull_requests_path, method: :post do |f|
   = f.input :id, as: :select, collection: @configuration.api_pull_requests.map{|pr| [pr.title, pr.id]}
   = f.submit
 %ul.branches

@@ -24,6 +24,9 @@
   @include grid-row
   > li
     @include grid-column(6)
+    padding: 5px
+    background-color: #EAEFEF
+    box-shadow: 2px 2px 2px rgba(1,1,1,.2)
     .build-btn
       +button($button-tny)
       float: right
@@ -32,6 +35,10 @@
       margin: 0
       list-style-type: none
       li
+        box-shadow: 2px 2px 2px rgba(1,1,1,.2)
+        background-color: $white
+        margin-bottom: 2px
+        padding: 3px 5px
         pre
           background-color: black
           color: #DDD
@@ -40,9 +47,10 @@
         &.collapsed
           >:not(.summary)
             display: none
-        &.success
+            margin-top: 2px
+        &.succeeded
           i.fa
-            color: #499
+            color: #4A9
         &.failed
           i.fa
             color: #944
